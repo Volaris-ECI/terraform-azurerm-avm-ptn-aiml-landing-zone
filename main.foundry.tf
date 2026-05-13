@@ -1,6 +1,5 @@
 module "foundry_ptn" {
-  source  = "Azure/avm-ptn-aiml-ai-foundry/azurerm"
-  version = "0.10.0"
+  source = "git::https://github.com/Volaris-ECI/terraform-azurerm-avm-ptn-aiml-ai-foundry.git?ref=main"
 
   #configure the base resource
   base_name                  = coalesce(var.name_prefix, "foundry")
