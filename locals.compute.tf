@@ -23,7 +23,7 @@ locals {
   container_app_environment_name = (
     try(var.container_app_environment_definition.name, null) != null ?
     var.container_app_environment_definition.name :
-    (var.name_prefix != null ? "${var.name_prefix}-container-app-env" : "ai-alz-container-app-env-${random_string.name_suffix.result}")
+    (var.name_prefix != null ? "${var.name_prefix}-cae-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-container-app-env-${random_string.name_suffix.result}")
   )
   container_app_environment_role_assignments = merge(
     local.container_app_environment_default_role_assignments,
