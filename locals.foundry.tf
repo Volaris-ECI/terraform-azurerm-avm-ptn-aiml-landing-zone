@@ -31,7 +31,7 @@ locals {
   foundry_diagnostic_settings = var.ai_foundry_definition.ai_foundry.enable_diagnostic_settings ? (length(var.ai_foundry_definition.ai_foundry.diagnostic_settings) > 0 ? var.ai_foundry_definition.ai_foundry.diagnostic_settings : local.foundry_diagnostic_settings_inner) : {}
   foundry_diagnostic_settings_inner = ((try(var.law_definition.deploy, false) == true) ? {
     sendToLogAnalytics = {
-      name                                     = "${var.name_prefix}sendToLogAnalytics-foundry-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}"
+      name                                     = "${var.name_prefix}-sendToLogAnalytics-foundry-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}"
       workspace_resource_id                    = local.log_analytics_workspace_id
       log_analytics_destination_type           = null
       log_groups                               = ["allLogs"]

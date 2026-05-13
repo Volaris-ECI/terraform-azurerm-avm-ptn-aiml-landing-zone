@@ -2,7 +2,7 @@ locals {
   cae_diagnostic_settings = var.container_app_environment_definition.enable_diagnostic_settings ? (length(var.container_app_environment_definition.diagnostic_settings) > 0 ? var.container_app_environment_definition.diagnostic_settings : local.cae_diagnostic_settings_inner) : {}
   cae_diagnostic_settings_inner = ((try(var.law_definition.deploy, false) == true) ? {
     sendToLogAnalytics = {
-      name                                     = "${var.name_prefix}sendToLogAnalytics-cae-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}"
+      name                                     = "${var.name_prefix}-sendToLogAnalytics-cae-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}"
       workspace_resource_id                    = local.log_analytics_workspace_id
       log_analytics_destination_type           = null
       log_groups                               = ["allLogs"]
