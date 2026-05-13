@@ -57,6 +57,22 @@ DESCRIPTION
   }
 }
 
+variable "workload_code" {
+  type        = string
+  default     = null
+  description = <<DESCRIPTION
+Optional short workload code used in resource naming (e.g. "ai", "data", "analytics").}
+DESCRIPTION
+}
+
+variable "instance_suffix" {
+  type        = string
+  default     = "1"
+  description = <<DESCRIPTION
+Optional instance suffix used in resource naming (e.g. "01", "1"). Defaults to "1".
+DESCRIPTION
+}
+
 variable "tags" {
   type        = map(string)
   default     = null

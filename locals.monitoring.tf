@@ -1,6 +1,7 @@
 locals {
   #deploy_diagnostics_settings  = var.law_definition.resource_id != null || length(module.log_analytics_workspace) > 0 #TODO - remove this after we update the diags logic
   log_analytics_workspace_id   = var.law_definition.resource_id != null ? var.law_definition.resource_id : (length(module.log_analytics_workspace) > 0 ? module.log_analytics_workspace[0].resource_id : null)
-  log_analytics_workspace_name = try(var.law_definition.name, null) != null ? var.law_definition.name : (var.name_prefix != null ? "${var.name_prefix}-law-ai-${lower(var.location)}-01" : "ai-alz-law")
+  log_analytics_workspace_name = try(var.law_definition.name, null) != null ? var.law_definition.name : (var.name_prefix != null ? "${var.name_prefix}-law-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-law")
+  region_suffix                = lower(var.location)
 }
 

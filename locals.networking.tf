@@ -2,7 +2,7 @@ locals {
   app_gw_diagnostic_settings = var.app_gateway_definition.enable_diagnostic_settings ? (length(var.app_gateway_definition.diagnostic_settings) > 0 ? var.app_gateway_definition.diagnostic_settings : local.app_gw_diagnostic_settings_inner) : {}
   app_gw_diagnostic_settings_inner = ((try(var.law_definition.deploy, false) == true) ? {
     sendToLogAnalytics = {
-      name                                     = "sendToLogAnalytics-appgw-${random_string.name_suffix.result}"
+      name                                     = "${var.name_prefix}-sendToLogAnalytics-appgw-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}"
       workspace_resource_id                    = local.log_analytics_workspace_id
       log_analytics_destination_type           = "Dedicated"
       log_groups                               = ["allLogs"]
@@ -14,12 +14,12 @@ locals {
       marketplace_partner_resource_id          = null
     }
   } : {})
-  application_gateway_name             = try(var.app_gateway_definition.name, null) != null ? var.app_gateway_definition.name : (var.name_prefix != null ? "${var.name_prefix}-appgw-ai-${lower(var.location)}-01" : "ai-alz-appgw")
+  application_gateway_name             = try(var.app_gateway_definition.name, null) != null ? var.app_gateway_definition.name : (var.name_prefix != null ? "${var.name_prefix}-appgw-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-appgw")
   application_gateway_role_assignments = try(var.app_gateway_definition.role_assignments, {}) #TODO - do we need this or can we just point it at the var?
   az_fw_diagnostic_settings            = var.firewall_definition.enable_diagnostic_settings ? (length(var.firewall_definition.diagnostic_settings) > 0 ? var.firewall_definition.diagnostic_settings : local.az_fw_diagnostic_settings_inner) : {}
   az_fw_diagnostic_settings_inner = ((try(var.law_definition.deploy, false) == true) ? {
     sendToLogAnalytics = {
-      name                                     = "sendToLogAnalytics-azfw-${random_string.name_suffix.result}"
+      name                                     = "${var.name_prefix}-sendToLogAnalytics-azfw-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}"
       workspace_resource_id                    = local.log_analytics_workspace_id
       log_analytics_destination_type           = "Dedicated"
       log_groups                               = ["allLogs"]
@@ -31,7 +31,7 @@ locals {
       marketplace_partner_resource_id          = null
     }
   } : {})
-  bastion_name = try(var.bastion_definition.name, null) != null ? var.bastion_definition.name : (var.name_prefix != null ? "${var.name_prefix}-bastion-ai-${lower(var.location)}-01" : "ai-alz-bastion")
+  bastion_name = try(var.bastion_definition.name, null) != null ? var.bastion_definition.name : (var.name_prefix != null ? "${var.name_prefix}-bastion-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-bastion")
   default_virtual_network_link = {
     alz_vnet_link = {
       vnetlinkname      = "${local.vnet_name}-link"
@@ -41,7 +41,7 @@ locals {
     }
   }
   deployed_subnets = { for subnet_name, subnet in local.subnets : subnet_name => subnet if subnet.enabled }
-  firewall_name    = try(var.firewall_definition.name, null) != null ? var.firewall_definition.name : (var.name_prefix != null ? "${var.name_prefix}-fw-ai-${lower(var.location)}-01" : "ai-alz-fw")
+  firewall_name    = try(var.firewall_definition.name, null) != null ? var.firewall_definition.name : (var.name_prefix != null ? "${var.name_prefix}-fw-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-fw")
   private_dns_zone_map = {
     key_vault_zone = {
       name = "privatelink.vaultcore.azure.net"
@@ -113,7 +113,7 @@ locals {
     resource_id = "${coalesce(var.private_dns_zones.existing_zones_resource_group_resource_id, "notused")}/providers/Microsoft.Network/privateDnsZones/${value.name}" #TODO: determine if there is a more elegant way to do this while avoiding errors
     }
   } : {}
-  route_table_name = var.name_prefix != null ? "${var.name_prefix}-fw-rt-ai-${lower(var.location)}-01" : "ai-alz-fw-rt"
+  route_table_name = var.name_prefix != null ? "${var.name_prefix}-fw-rt-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-fw-rt"
   subnet_ids       = length(var.vnet_definition.existing_byo_vnet) > 0 ? { for key, m in module.byo_subnets : key => try(m.resource_id, m.id) } : { for key, s in module.ai_lz_vnet[0].subnets : key => s.resource_id }
   subnets = {
     AzureBastionSubnet = {
@@ -354,7 +354,7 @@ locals {
   vnet_diagnostic_settings = var.vnet_definition.enable_diagnostic_settings ? (length(var.vnet_definition.diagnostic_settings) > 0 ? var.vnet_definition.diagnostic_settings : local.vnet_diagnostic_settings_inner) : {}
   vnet_diagnostic_settings_inner = ((try(var.law_definition.deploy, false) == true) ? {
     sendToLogAnalytics = {
-      name                                     = "sendToLogAnalytics-vnet-${random_string.name_suffix.result}"
+      name                                     = "${var.name_prefix}-sendToLogAnalytics-vnet-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}"
       workspace_resource_id                    = local.log_analytics_workspace_id
       log_analytics_destination_type           = "Dedicated"
       log_groups                               = ["allLogs"]
@@ -366,7 +366,7 @@ locals {
       marketplace_partner_resource_id          = null
     }
   } : {})
-  vnet_name        = length(var.vnet_definition.existing_byo_vnet) > 0 ? try(basename(values(var.vnet_definition.existing_byo_vnet)[0].vnet_resource_id), null) : (try(var.vnet_definition.name, null) != null ? var.vnet_definition.name : (var.name_prefix != null ? "${var.name_prefix}-vnet-ai-${lower(var.location)}-01" : "ai-alz-vnet"))
+  vnet_name        = length(var.vnet_definition.existing_byo_vnet) > 0 ? try(basename(values(var.vnet_definition.existing_byo_vnet)[0].vnet_resource_id), null) : (try(var.vnet_definition.name, null) != null ? var.vnet_definition.name : (var.name_prefix != null ? "${var.name_prefix}-vnet-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-vnet"))
   vnet_resource_id = length(var.vnet_definition.existing_byo_vnet) > 0 ? data.azurerm_virtual_network.ai_lz_vnet[0].id : module.ai_lz_vnet[0].resource_id
   #web_application_firewall_managed_rules = var.waf_policy_definition.managed_rules == null ? {
   #  managed_rule_set = tomap({
@@ -377,5 +377,5 @@ locals {
   #    }
   #  })
   #} : var.waf_policy_definition.managed_rules
-  web_application_firewall_policy_name = try(var.waf_policy_definition.name, null) != null ? var.waf_policy_definition.name : (var.name_prefix != null ? "${var.name_prefix}-waf-policy-ai-${lower(var.location)}-01" : "ai-alz-waf-policy")
+  web_application_firewall_policy_name = try(var.waf_policy_definition.name, null) != null ? var.waf_policy_definition.name : (var.name_prefix != null ? "${var.name_prefix}-waf-policy-${var.workload_code}-${lower(var.location)}-${var.instance_suffix}" : "ai-alz-waf-policy")
 }
