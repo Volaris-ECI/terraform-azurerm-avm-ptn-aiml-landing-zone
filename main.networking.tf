@@ -154,7 +154,7 @@ module "fw_pip" {
   count   = !var.flag_platform_landing_zone && length(var.vnet_definition.existing_byo_vnet) == 0 ? 1 : 0
 
   location            = azurerm_resource_group.this.location
-  name                = "${local.firewall_name}-pip"
+  name                = var.name_prefix != null ? "${var.name_prefix}-pip-fw-ai-${lower(var.location)}-01" : "ai-alz-pip-fw"
   resource_group_name = var.firewall_definition.resource_group_name != null ? var.firewall_definition.resource_group_name : azurerm_resource_group.this.name
   enable_telemetry    = var.enable_telemetry
   zones               = var.firewall_definition.zones
